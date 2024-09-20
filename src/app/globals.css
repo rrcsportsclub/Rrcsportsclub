@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+.bordered-text {
+  text-shadow: -1px -1px 0 #3666a6, 1px -1px 0 #3666a6, -1px 1px 0 #3666a6,
+    1px 1px 0 #3666a6;
+}
+
+.shadowed-text {
+  text-shadow: 4px 4px 4px #303030;
+}
+
+.blinking-shadow {
+  box-shadow: 0 0 5px 5px #ffffff;
+  animation: blink-shadow 1s infinite;
+}
+
+@keyframes blink-shadow {
+  0% {
+    box-shadow: 0 0 5px 5px #ffffff; /* Initial shadow */
+  }
+  50% {
+    box-shadow: 0 0 5px 5px transparent; /* Shadow becomes transparent */
+  }
+  100% {
+    box-shadow: 0 0 5px 5px #ffffff; /* Reset to initial shadow */
+  }
+}
+
+@keyframes spin {
+  0% {
+  }
+  50% {
+    scale: 2;
+    /* transform: rotate(0); */
+    /* border-radius: 0; */
+  }
+  100% {
+    /* transform: rotate(360deg); */
+    /* border-radius: 50%; */
+    scale: 2;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@font-face {
+  font-family: "Post No Bills Jaffna";
+  src: url("/public/fonts/postnobillscolombo-extrabold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+.custom-font-jaffna {
+  font-family: "Post No Bills Jaffna", sans-serif;
+  font-weight: 800;
+}
