@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["www.kasandbox.org"],
+    domains: [
+      "https://rrcsportsclub-8jdj2vpk8-rrcsportsclubs-projects.vercel.app/",
+    ],
   },
 };
 
