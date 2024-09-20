@@ -13,7 +13,10 @@ export default async function getGoogleSheetsClient() {
         token_url: keys.token_uri,
         universe_domain: "googleapis.com",
       },
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      scopes: [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://rrcsportsclub.vercel.app/",
+      ],
     });
 
     const sheets = google.sheets({ version: "v4", auth });
