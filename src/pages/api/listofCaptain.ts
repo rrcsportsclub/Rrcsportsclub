@@ -16,7 +16,6 @@ export default async function handler(
 ): Promise<void> {
   try {
     const sheets: sheets_v4.Sheets | undefined = await getGoogleSheetsClient(); // Explicitly type the sheets client
-    console.log(sheets?.spreadsheets.values);
     if (req.method === "GET") {
       const response = await sheets?.spreadsheets.values.get({
         spreadsheetId: process.env.GOOGLE_SHEET_ID,
@@ -27,8 +26,6 @@ export default async function handler(
         spreadsheetId: process.env.GOOGLE_SHEET_ID,
         range: "Sheet1!B:Y",
       });
-
-      console.log(CaptainPlayers?.data.values);
       // Convert the data into JSON format
       // const headers :any = response?.data?.values?[1]:[1] // Headers are at index 1
       const CaptainData = response?.data.values?.slice(2); // Actual data starts from index 2
