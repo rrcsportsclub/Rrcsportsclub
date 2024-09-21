@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import keys from "../../../hemdarcollection-680a28236086.json";
 import { NextApiRequest, NextApiResponse } from "next";
 
 type SheetForm = {
@@ -12,18 +11,23 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const project_id = process.env.NEXT_PUBLIC_PROJECT_ID;
+  const private_key = process.env.NEXT_PUBLIC_PRIVATE_KEY;
+  const client_email = process.env.NEXT_PUBLIC_CLIENT_EMAIL;
+  const client_id = process.env.NEXT_PUBLIC_CLIENT_ID;
+  const token_uri = process.env.NEXT_PUBLIC_TOKEN_URL;
   try {
     if (req.method !== "POST") {
       return res.status(405).send({ message: "ONLY POST REQUEST ARE ALLOWED" });
     }
     const auth = await google.auth.getClient({
-      projectId: keys.project_id,
+      projectId: project_id,
       credentials: {
         type: "service_account",
-        private_key: keys.private_key,
-        client_email: keys.client_email,
-        client_id: keys.client_id,
-        token_url: keys.token_uri,
+        private_key: private_key,
+        client_email: client_email,
+        client_id: client_id,
+        token_url: token_uri,
         universe_domain: "googleapis.com",
       },
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
