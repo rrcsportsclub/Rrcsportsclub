@@ -77,7 +77,7 @@ export default function UploadCaptains() {
     };
     try {
       await axios
-        .post("http://localhost:3000/api/listofCaptain", captainDetails)
+        .post("/api/listofCaptain", captainDetails)
         .then(() => initCaptain());
     } catch (error) {
       console.error(error, "Failed to upload captain");
@@ -86,11 +86,9 @@ export default function UploadCaptains() {
 
   const initCaptain = async () => {
     try {
-      await axios
-        .get<Captain[]>("http://localhost:3000/api/listofCaptain")
-        .then((data) => {
-          dispatch(setCaptainsList(data.data));
-        });
+      await axios.get<Captain[]>("/api/listofCaptain").then((data) => {
+        dispatch(setCaptainsList(data.data));
+      });
     } catch (error) {
       console.error(error, "Failed to fetch player data");
     }

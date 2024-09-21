@@ -23,7 +23,7 @@ export default function FinalAuctionDetail() {
 
   const initCaptains = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/listofCaptain");
+      const res = await axios.get("/api/listofCaptain");
 
       dispatch(setCaptainsList(res.data));
     } catch (error) {

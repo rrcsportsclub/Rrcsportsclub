@@ -61,7 +61,7 @@ export default function Auction() {
 
   const initPlayers = async () => {
     try {
-      await axios.get("http://localhost:3000/api/listofplayers").then((res) => {
+      await axios.get("/api/listofplayers").then((res) => {
         const filtredRes = res.data?.filter(
           (obj: any) => Object.keys(obj).length !== 0
         );
@@ -91,7 +91,7 @@ export default function Auction() {
 
   const initCaptains = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/listofCaptain");
+      const res = await axios.get("/api/listofCaptain");
 
       dispatch(setCaptainsList(res.data));
       // const abc = latestBidingAct ? activeCaptainIndex + 1 : 0;
@@ -134,7 +134,7 @@ export default function Auction() {
     };
     try {
       await axios
-        .post("http://localhost:3000/api/biddingactivity", bidingData)
+        .post("/api/biddingactivity", bidingData)
         .then(() => {
           value === "sold" ? setIsSoldClicked(true) : setBidIsClicked(true);
           if (value === "sold") {
@@ -177,36 +177,32 @@ export default function Auction() {
 
   const bidingActivity = async () => {
     try {
-      await axios
-        .get("http://localhost:3000/api/biddingactivity")
-        .then((data: any) => {
-          const firstvalueofslice = data.data.length - captainsList?.length;
-          const latestCaptainData = data.data.slice(
-            firstvalueofslice < 0 ? 0 : firstvalueofslice,
-            data.data.length
+      await axios.get("/api/biddingactivity").then((data: any) => {
+        const firstvalueofslice = data.data.length - captainsList?.length;
+        const latestCaptainData = data.data.slice(
+          firstvalueofslice < 0 ? 0 : firstvalueofslice,
+          data.data.length
+        );
+        dispatch(setBidingRoundData(latestCaptainData));
+        setBidingAmt(0);
+        if (latestCaptainData.length > 0) {
+          const listOfCaptainName = captainsList.map((captain) => captain.name);
+          const activeCaptainIndex = listOfCaptainName.indexOf(
+            latestCaptainData[latestCaptainData.length - 1]?.captain
           );
-          dispatch(setBidingRoundData(latestCaptainData));
-          setBidingAmt(0);
-          if (latestCaptainData.length > 0) {
-            const listOfCaptainName = captainsList.map(
-              (captain) => captain.name
-            );
-            const activeCaptainIndex = listOfCaptainName.indexOf(
-              latestCaptainData[latestCaptainData.length - 1]?.captain
-            );
-            dispatch(
-              setBidingChance(
-                captainsList[
-                  activeCaptainIndex === listOfCaptainName.length - 1
-                    ? 0
-                    : activeCaptainIndex + 1
-                ]
-              )
-            );
-          } else {
-            dispatch(setBidingChance(captainsList[0]));
-          }
-        });
+          dispatch(
+            setBidingChance(
+              captainsList[
+                activeCaptainIndex === listOfCaptainName.length - 1
+                  ? 0
+                  : activeCaptainIndex + 1
+              ]
+            )
+          );
+        } else {
+          dispatch(setBidingChance(captainsList[0]));
+        }
+      });
     } catch (error) {
       console.error(error, "Error in biding activity");
     }
@@ -214,7 +210,7 @@ export default function Auction() {
 
   useEffect(() => {
     initPlayers().then(() => {
-      if (bidingRoundData[bidingRoundData.length - 1].status === "sold")
+      if (bidingRoundData[bidingRoundData.length - 1]?.status === "sold")
         dispatch(setMovement(!movement));
     });
   }, [bidingRoundData]);

@@ -99,7 +99,7 @@ export default function UploadPlayers() {
     };
     try {
       await axios
-        .post("http://localhost:3000/api/listofplayers", playerDetail)
+        .post("/api/listofplayers", playerDetail)
         .then(() => initPlayers());
     } catch (error) {
       console.error(error, "Failed to upload player");
@@ -108,14 +108,12 @@ export default function UploadPlayers() {
 
   const initPlayers = async () => {
     try {
-      await axios
-        .get<Player[]>("http://localhost:3000/api/listofplayers")
-        .then((data) => {
-          const filtredRes = data.data?.filter(
-            (obj: any) => Object.keys(obj).length !== 0
-          );
-          dispatch(setPlayersList(filtredRes));
-        });
+      await axios.get<Player[]>("/api/listofplayers").then((data) => {
+        const filtredRes = data.data?.filter(
+          (obj: any) => Object.keys(obj).length !== 0
+        );
+        dispatch(setPlayersList(filtredRes));
+      });
     } catch (error) {
       console.error(error, "Failed to fetch player data");
     }
