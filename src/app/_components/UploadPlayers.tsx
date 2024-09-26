@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   MdDeleteOutline,
   MdOutlineEdit,
@@ -24,8 +24,11 @@ interface Player {
 }
 
 export default function UploadPlayers() {
-  //   const [preview, setPreview] = useState<string | null>(null);
-  //   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const playersList = useSelector(
     (state: RootState) => state.players.playersList
@@ -52,6 +55,66 @@ export default function UploadPlayers() {
   //       .required("Image URL is required"),
   //   });
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // (event) => {
+  //   const image = event.target.files?.[0];
+  //   if (image) {
+  //     formik.setFieldValue("imageUrl", image);
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setPreview(reader.result as string);
+  //     };
+  //     reader.readAsDataURL(image);
+  //   } else {
+  //     setPreview(null);
+  //   }
+  // }
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      setUploadStatus("Please select a file to upload.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+
+    try {
+      // setIsLoading(true);
+      const response = await axios.post(`/api/image`, formData, {
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+      });
+
+      if (response.status === 200) {
+        setUploadStatus("File uploaded successfully.");
+        formik.setFieldValue("imageUrl", response.data.fileurl);
+
+        setPreview(null);
+        setSelectedFile(null);
+      } else {
+        setUploadStatus("File upload failed.");
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploadStatus("Error uploading file.");
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -59,10 +122,8 @@ export default function UploadPlayers() {
       speciality: "",
       usp: "",
       imageUrl: "",
-      //   imageUrl: null as File | null,
     },
     onSubmit: (values) => {
-      //   console.log(values);
       uploadPlayerDetail(values);
       formik.resetForm({
         values: {
@@ -71,13 +132,8 @@ export default function UploadPlayers() {
           speciality: "",
           usp: "",
           imageUrl: "",
-          //   imageUrl: null,
         },
       });
-      //   setPreview(null);
-      //   if (fileInputRef.current) {
-      //     fileInputRef.current.value = "";
-      //   }
     },
   });
 
@@ -94,6 +150,7 @@ export default function UploadPlayers() {
         values.speciality,
         values.usp,
         values.imageUrl,
+        "unsold",
         // "https://www.kasandbox.org/programming-images/avatars/old-spice-man.png",
       ],
     };
@@ -126,7 +183,7 @@ export default function UploadPlayers() {
   return (
     <div className="flex flex-col justify-between items-center z-50 gap-12">
       <form onSubmit={formik.handleSubmit}>
-        <div className="z-50 bg-white flex flex-col items-center p-[24px] gap-[52px] sm:w-[597px] h-[500px] rounded-[30px] shadow-md shadow-[#000000]">
+        <div className="z-50 bg-white flex flex-col items-center p-[24px] gap-[30px] sm:w-[597px] h-[500px] rounded-[30px] shadow-md shadow-[#000000]">
           <h1 className="font-semibold text-2xl">PLAYERS</h1>
           <div className="flex flex-col gap-[26px] w-full">
             <div className="flex gap-[42px] justify-center w-full">
@@ -183,44 +240,44 @@ export default function UploadPlayers() {
               </div>
             </div>
           </div>
-          <div className="w-[100%] h-full flex justify-center items-center gap-2 rounded-[30px] bg-[#E3E3E3] border-[2px] border-[#79747E] border-dashed">
+          <div className="w-[100%] h-full flex justify-around p-1 items-center rounded-[30px] bg-[#E3E3E3] border-[2px] border-[#79747E] border-dashed">
             {/* <label>
               <MdOutlineFileUpload />
             </label> */}
-            <textarea
+            <input
+              type="file"
               id="imageUrl"
               name="imageUrl"
               //   type="file"
-              className="w-[100%] h-[100%] rounded-[30px] p-4"
+              className="w-[45%] h-[30%]"
               //   ref={fileInputRef}
-              onChange={formik.handleChange}
+              // onChange={formik.handleChange}
               value={formik.values.imageUrl}
-              //   onChange={(event) => {
-              //     const image = event.target.files?.[0];
-              //     if (image) {
-              //       formik.setFieldValue("imageUrl", image);
-              //       const reader = new FileReader();
-              //       reader.onloadend = () => {
-              //         setPreview(reader.result as string);
-              //       };
-              //       reader.readAsDataURL(image);
-              //     } else {
-              //       setPreview(null);
-              //     }
-              //   }}
+              onChange={handleFileChange}
             />
-
-            {/* {preview && (
-              <div>
-                <Image
-                  src={preview}
-                  alt="Player Image"
-                  width={70}
-                  height={70}
-                  className="size-[85px]"
-                />
-              </div>
-            )} */}
+            <div className="flex flex-col justify-between items-center">
+              {preview && (
+                <div>
+                  <Image
+                    src={preview}
+                    alt="Player Image"
+                    width={100}
+                    height={100}
+                    className="size-[100px]"
+                  />
+                </div>
+              )}
+              {uploadStatus && (
+                <p className="text-xs text-red-500 ">{uploadStatus}</p>
+              )}
+              <button
+                className="bg-black text-white rounded-xl py-1 px-3"
+                type="button"
+                onClick={handleFileUpload}
+              >
+                Add Image
+              </button>
+            </div>
           </div>
           <button
             type="submit"

@@ -159,13 +159,15 @@ export default function Auction() {
         .then(() => {
           setTimeout(() => {
             if (value === "sold") {
-              initPlayers().then(() => {
-                // const randomIndex = Math.floor(
-                //   Math.random() * playersList.length
-                // );
-                // dispatch(setCurrentBidingPlayer(playersList[randomIndex]));
-                dispatch(setMovement(!movement));
-              });
+              initCaptains()
+                .then(() => initPlayers())
+                .then(() => {
+                  // const randomIndex = Math.floor(
+                  //   Math.random() * playersList.length
+                  // );
+                  // dispatch(setCurrentBidingPlayer(playersList[randomIndex]));
+                  dispatch(setMovement(!movement));
+                });
               // .then(() => dispatch(setBidingChance(captainsList[0]))); // check if its correct
             }
           }, 5000);

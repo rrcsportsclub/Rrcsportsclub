@@ -85,7 +85,7 @@ export default function Captains() {
           key={captain.srNo}
           className={`w-full`}
           style={{
-            marginLeft: `${34 * i}px`,
+            marginLeft: `${55 * i}px`,
           }}
         >
           {bidingChance.srNo === captain.srNo && (

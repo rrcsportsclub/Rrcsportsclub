@@ -49,7 +49,7 @@ export default function Players() {
         >
           {bidingRoundData.length > 0
             ? bidingRoundData[bidingRoundData.length - 1].status === "sold"
-              ? currentBidingPlayer.basePrice
+              ? currentBidingPlayer?.basePrice
               : bidingRoundData[bidingRoundData.length - 1].totalamt
             : currentBidingPlayer.basePrice}
         </p>

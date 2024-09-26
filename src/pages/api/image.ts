@@ -42,6 +42,8 @@ const handler: NextApiHandler = async (
         return res.status(400).json({ error: "No file uploaded" });
       }
 
+      console.log(file);
+
       // Upload the file to Google Drive using the UploadImage function
       const uploadedImageUrl = await UploadImage(file);
 

@@ -15,7 +15,7 @@ export default function PlayersSoldAnimation({ bidingAmt }: any) {
   const latestBidingAct = bidingRoundData[bidingRoundData.length - 1];
   const basePrice = latestBidingAct
     ? latestBidingAct.status === "sold"
-      ? currentBidingPlayer.basePrice
+      ? currentBidingPlayer?.basePrice
       : latestBidingAct.totalamt
     : currentBidingPlayer.basePrice;
 
@@ -27,7 +27,7 @@ export default function PlayersSoldAnimation({ bidingAmt }: any) {
       //   style={{ animation: "spin 3s ease infinite alternate" }}
       style={{ animation: "spin 3s ease 1 normal forwards" }}
     >
-      {currentBidingPlayer.name} sold to {bidingChance.name} at Rs.{totalamt}
+      {currentBidingPlayer?.name} sold to {bidingChance.name} at Rs.{totalamt}
     </div>
   );
 }

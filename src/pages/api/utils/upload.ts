@@ -32,6 +32,7 @@ export async function UploadImage(file: any) {
         body: fs.createReadStream(file.path),
       },
     });
+    console.log(response);
     const url = await generatePublicUrl(response.data.id || "");
     fs.unlinkSync(file.path);
     console.log(url);
