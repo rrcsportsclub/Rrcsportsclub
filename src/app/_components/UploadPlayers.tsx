@@ -81,6 +81,7 @@ export default function UploadPlayers() {
     try {
       // setIsLoading(true);
       const response = await axios.post(`/api/image`, formData);
+      console.log(response.data);
       // if (response.status === 200) {
       if (response.data.url !== "") {
         setUploadStatus("File uploaded successfully.");
