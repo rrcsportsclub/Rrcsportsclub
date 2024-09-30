@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 import path from "path";
 import fs from "fs";
+import { Readable } from "stream";
 const ClientID = process.env.GOOGLE_CLIENT_ID;
 const ClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 const RedirectURI = process.env.GOOGLE_REDIRECT_URI;
@@ -22,19 +23,33 @@ const filtPath = path.join(__dirname, "abc.png");
 
 export async function UploadImage(file: any) {
   try {
+    // const response = await drive.files.create({
+    //   requestBody: {
+    //     name: file.originalname,
+    //     mimeType: file.mimetype,
+    //   },
+    //   media: {
+    //     mimeType: file.mimetype,
+    //     body: fs.createReadStream(file.path),
+    //   },
+    // });
+    const bufferStream = new Readable();
+    bufferStream.push(file.buffer);
+    bufferStream.push(null); // Signal end of stream
+
     const response = await drive.files.create({
       requestBody: {
-        name: file.originalname,
+        name: file.originalname, // Original file name
         mimeType: file.mimetype,
       },
       media: {
         mimeType: file.mimetype,
-        body: fs.createReadStream(file.path),
+        body: bufferStream, // Send the buffer stream
       },
     });
     console.log(response);
     const url = await generatePublicUrl(response.data.id || "");
-    fs.unlinkSync(file.path);
+    // fs.unlinkSync(file.path);
     console.log(url);
     return url;
   } catch (error) {

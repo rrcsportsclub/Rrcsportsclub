@@ -4,7 +4,11 @@ import { UploadImage } from "./utils/upload"; // Import your Upload service
 import { NextApiHandler } from "next";
 
 // Configure multer for file uploads
-const upload = multer({ dest: "uploads/" }); // Save temporary uploads in 'uploads' folder
+// const upload = multer({ dest: "uploads/" }); // Save temporary uploads in 'uploads' folder
+
+// Configure multer to store files in memory
+const storage = multer.memoryStorage();
+const upload = multer({ storage }); // Store files in memory
 
 // Disable Next.js body parsing to handle multipart/form-data
 export const config = {
