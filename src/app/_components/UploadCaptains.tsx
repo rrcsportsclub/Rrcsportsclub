@@ -31,11 +31,57 @@ interface Captain {
 }
 
 export default function UploadCaptains() {
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const captainsList = useSelector(
     (state: RootState) => state.captains.captainsList
   );
 
   const dispatch = useDispatch();
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      setUploadStatus("Please select a file to upload.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+
+    try {
+      // setIsLoading(true);
+      const response = await axios.post(`/api/image`, formData);
+      // if (response.status === 200) {
+      if (response.data.url !== "") {
+        setUploadStatus("File uploaded successfully.");
+        formik.setFieldValue("imageUrl", response.data.url);
+
+        setPreview(null);
+        setSelectedFile(null);
+      } else {
+        setUploadStatus("File upload failed.");
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploadStatus("Error uploading file.");
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -103,7 +149,7 @@ export default function UploadCaptains() {
   return (
     <div className="z-50 flex flex-col justify-between items-center gap-12">
       <form onSubmit={formik.handleSubmit}>
-        <div className="bg-white flex flex-col items-center p-[24px] gap-[52px] sm:w-[597px] h-[500px] rounded-[30px] shadow-md shadow-[#000000]">
+        <div className="bg-white flex flex-col items-center p-[24px] gap-[30px] sm:w-[597px] h-[500px] rounded-[30px] shadow-md shadow-[#000000]">
           <h1 className="font-semibold text-2xl">CAPTAINS</h1>
           <div className="flex flex-col gap-[26px] w-full">
             <div className="flex gap-[42px] justify-center w-full">
@@ -155,25 +201,56 @@ export default function UploadCaptains() {
               </div>
             </div>
           </div>
-          {/* <div className="w-[100%] h-full flex justify-center items-center gap-1 rounded-[30px] bg-[#E3E3E3] border-[2px] border-[#79747E] border-dashed">
-            <span>
-              <MdOutlineFileUpload />
-            </span>
-            <p>Upload image</p>
-          </div> */}
-          <div className="w-[100%] h-full flex justify-center items-center gap-2 rounded-[30px] bg-[#E3E3E3] border-[2px] border-[#79747E] border-dashed">
-            <textarea
+
+          <div className="w-[100%] h-full flex justify-around p-1 items-center rounded-[30px] bg-[#E3E3E3] border-[2px] border-[#79747E] border-dashed">
+            <input
+              type="file"
               id="imageUrl"
               name="imageUrl"
-              className="w-[100%] h-[100%] rounded-[30px] p-4"
-              onChange={formik.handleChange}
-              value={formik.values.imageUrl}
+              className="w-[45%] h-[30%]"
+              onChange={handleFileChange}
             />
+            <div className="flex flex-col justify-between items-center gap-1">
+              {preview && (
+                <div>
+                  <Image
+                    src={preview}
+                    alt="Player Image"
+                    width={100}
+                    height={100}
+                    className="size-[100px]"
+                  />
+                </div>
+              )}
+              {uploadStatus && (
+                <p
+                  className={`${
+                    uploadStatus === "File uploaded successfully."
+                      ? "text-black"
+                      : "text-red-500"
+                  } text-xs`}
+                >
+                  {uploadStatus}
+                </p>
+              )}
+              <button
+                className="bg-black text-white rounded-xl py-1 px-3"
+                type="button"
+                onClick={handleFileUpload}
+              >
+                Add Image
+              </button>
+            </div>
           </div>
 
           <button
             type="submit"
-            className="w-[100%] h-fullrounded-[30px] bg-black text-center text-[#E3E3E3]  border-[2px] border-[#79747E] p-2 rounded-[10px]"
+            disabled={
+              uploadStatus === "File uploaded successfully." ? false : true
+            }
+            className={` ${
+              uploadStatus === "File uploaded successfully." ? "" : "opacity-50"
+            } w-[100%] h-fullrounded-[30px] bg-black text-center text-[#E3E3E3]  border-[2px] border-[#79747E] p-2 rounded-[10px]`}
           >
             <p>UPLOAD DETAILS</p>
           </button>

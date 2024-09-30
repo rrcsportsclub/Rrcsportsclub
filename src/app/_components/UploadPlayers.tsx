@@ -26,7 +26,7 @@ interface Player {
 export default function UploadPlayers() {
   const [preview, setPreview] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string>("");
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -69,20 +69,6 @@ export default function UploadPlayers() {
     }
   };
 
-  // (event) => {
-  //   const image = event.target.files?.[0];
-  //   if (image) {
-  //     formik.setFieldValue("imageUrl", image);
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setPreview(reader.result as string);
-  //     };
-  //     reader.readAsDataURL(image);
-  //   } else {
-  //     setPreview(null);
-  //   }
-  // }
-
   const handleFileUpload = async () => {
     if (!selectedFile) {
       setUploadStatus("Please select a file to upload.");
@@ -94,15 +80,11 @@ export default function UploadPlayers() {
 
     try {
       // setIsLoading(true);
-      const response = await axios.post(`/api/image`, formData, {
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
-      });
-
-      if (response.status === 200) {
+      const response = await axios.post(`/api/image`, formData);
+      // if (response.status === 200) {
+      if (response.data.url !== "") {
         setUploadStatus("File uploaded successfully.");
-        formik.setFieldValue("imageUrl", response.data.fileurl);
+        formik.setFieldValue("imageUrl", response.data.url);
 
         setPreview(null);
         setSelectedFile(null);
@@ -157,10 +139,20 @@ export default function UploadPlayers() {
     try {
       await axios
         .post("/api/listofplayers", playerDetail)
-        .then(() => initPlayers());
+        .then(() => initPlayers())
+        .then(() => setUploadStatus(""));
     } catch (error) {
       console.error(error, "Failed to upload player");
     }
+  };
+
+  const deletePlayer = async () => {
+    console.log("Player deleted");
+    // try {
+    //   await axios.delete("/api/listofplayers")
+    // } catch (error) {
+    //   console.error(error, "Failed to delete player");
+    // }
   };
 
   const initPlayers = async () => {
@@ -241,21 +233,14 @@ export default function UploadPlayers() {
             </div>
           </div>
           <div className="w-[100%] h-full flex justify-around p-1 items-center rounded-[30px] bg-[#E3E3E3] border-[2px] border-[#79747E] border-dashed">
-            {/* <label>
-              <MdOutlineFileUpload />
-            </label> */}
             <input
               type="file"
               id="imageUrl"
               name="imageUrl"
-              //   type="file"
               className="w-[45%] h-[30%]"
-              //   ref={fileInputRef}
-              // onChange={formik.handleChange}
-              value={formik.values.imageUrl}
               onChange={handleFileChange}
             />
-            <div className="flex flex-col justify-between items-center">
+            <div className="flex flex-col justify-between items-center gap-1">
               {preview && (
                 <div>
                   <Image
@@ -268,7 +253,15 @@ export default function UploadPlayers() {
                 </div>
               )}
               {uploadStatus && (
-                <p className="text-xs text-red-500 ">{uploadStatus}</p>
+                <p
+                  className={`${
+                    uploadStatus === "File uploaded successfully."
+                      ? "text-black"
+                      : "text-red-500"
+                  } text-xs`}
+                >
+                  {uploadStatus}
+                </p>
               )}
               <button
                 className="bg-black text-white rounded-xl py-1 px-3"
@@ -281,7 +274,12 @@ export default function UploadPlayers() {
           </div>
           <button
             type="submit"
-            className="w-[100%] h-fullrounded-[30px] bg-black text-center text-[#E3E3E3]  border-[2px] border-[#79747E] p-2 rounded-[10px]"
+            disabled={
+              uploadStatus === "File uploaded successfully." ? false : true
+            }
+            className={` ${
+              uploadStatus === "File uploaded successfully." ? "" : "opacity-50"
+            } w-[100%] h-fullrounded-[30px] bg-black text-center text-[#E3E3E3]  border-[2px] border-[#79747E] p-2 rounded-[10px]`}
           >
             UPLOAD DETAILS
           </button>
@@ -334,7 +332,9 @@ export default function UploadPlayers() {
 
                   <td className="w-[20%] p-2 text-center">
                     <div className="flex justify-center">
-                      <MdDeleteOutline />
+                      <button onClick={() => deletePlayer()}>
+                        <MdDeleteOutline />
+                      </button>
                     </div>
                   </td>
                 </tr>
