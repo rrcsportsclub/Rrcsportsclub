@@ -22,9 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${cutive.className} flex flex-col relative max-w-screen-2xl`}
-      >
+      <body className={`${cutive.className} flex flex-col w-full relative`}>
         <Providers>
           <Header />
           <div className="flex-1 absolute">

@@ -2,6 +2,10 @@ import { Josefin_Sans } from "next/font/google";
 import UploadPlayers from "../_components/UploadPlayers";
 import UploadCaptains from "../_components/UploadCaptains";
 
+export const metadata = {
+  title: "Upload Details",
+};
+
 const josefinSans = Josefin_Sans({
   subsets: ["latin"],
   weight: "400",

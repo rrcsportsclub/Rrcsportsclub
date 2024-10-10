@@ -31,6 +31,8 @@ interface Captain {
 }
 
 export default function UploadCaptains() {
+  const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
+  const [isDetailsLoading, setIsDetailsLoading] = useState<boolean>(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -65,7 +67,7 @@ export default function UploadCaptains() {
     formData.append("image", selectedFile);
 
     try {
-      // setIsLoading(true);
+      setIsImageLoading(true);
       const response = await axios.post(`/api/image`, formData);
       // if (response.status === 200) {
       if (response.data.url !== "") {
@@ -74,12 +76,14 @@ export default function UploadCaptains() {
 
         setPreview(null);
         setSelectedFile(null);
+        setIsImageLoading(false);
       } else {
         setUploadStatus("File upload failed.");
       }
     } catch (error) {
       console.error("Error uploading file:", error);
       setUploadStatus("Error uploading file.");
+      setIsImageLoading(false);
     }
   };
 
@@ -122,9 +126,12 @@ export default function UploadCaptains() {
       ],
     };
     try {
+      setIsDetailsLoading(true);
       await axios
         .post("/api/listofCaptain", captainDetails)
-        .then(() => initCaptain());
+        .then(() => initCaptain())
+        .then(() => setUploadStatus(""))
+        .then(() => setIsDetailsLoading(false));
     } catch (error) {
       console.error(error, "Failed to upload captain");
     }
@@ -234,11 +241,16 @@ export default function UploadCaptains() {
                 </p>
               )}
               <button
-                className="bg-black text-white rounded-xl py-1 px-3"
+                className="bg-black text-white rounded-xl py-1 px-3 w-[105px] flex justify-center"
                 type="button"
                 onClick={handleFileUpload}
               >
-                Add Image
+                {isImageLoading ? (
+                  // <AiOutlineLoading3Quarters className="animate-spin" />
+                  <MdOutlineFileUpload className="animate-bounce" />
+                ) : (
+                  "Add Image"
+                )}
               </button>
             </div>
           </div>
@@ -250,9 +262,15 @@ export default function UploadCaptains() {
             }
             className={` ${
               uploadStatus === "File uploaded successfully." ? "" : "opacity-50"
-            } w-[100%] h-fullrounded-[30px] bg-black text-center text-[#E3E3E3]  border-[2px] border-[#79747E] p-2 rounded-[10px]`}
+            } w-[100%] flex justify-center h-fullrounded-[30px] bg-black text-center text-[#E3E3E3]  border-[2px] border-[#79747E] p-2 rounded-[10px]`}
           >
-            <p>UPLOAD DETAILS</p>
+            <p>
+              {isDetailsLoading ? (
+                <MdOutlineFileUpload className="animate-bounce" />
+              ) : (
+                "UPLOAD DETAILS"
+              )}
+            </p>
           </button>
         </div>
       </form>

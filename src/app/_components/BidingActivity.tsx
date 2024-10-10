@@ -13,6 +13,7 @@ import {
   setPlayersList,
 } from "../GlobalRedux/features/playersSlice";
 import PlayersSoldAnimation from "./PlayersSoldAnimation";
+import { ImSpinner3 } from "react-icons/im";
 
 const concertOne = Concert_One({
   subsets: ["latin"],
@@ -35,12 +36,13 @@ export default function BidingActivity({
   const bidingRoundData = useSelector(
     (state: RootState) => state.biding.bidingRoundData
   );
-  const currentBidingPlayer = useSelector(
-    (state: RootState) => state.players.currentBidingPlayer
-  );
-  const playersList = useSelector(
-    (state: RootState) => state.players.playersList
-  );
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  // const currentBidingPlayer = useSelector(
+  //   (state: RootState) => state.players.currentBidingPlayer
+  // );
+  // const playersList = useSelector(
+  //   (state: RootState) => state.players.playersList
+  // );
 
   const movement = useSelector((state: RootState) => state.players.movement);
 
@@ -64,6 +66,7 @@ export default function BidingActivity({
 
   // console.log(bidingRoundData);
   // console.log(bidingChance);
+  console.log(isLoggedIn);
 
   return (
     <div className=" flex flex-col items-center gap-5 p-3 relative">
@@ -125,23 +128,27 @@ export default function BidingActivity({
           SKIP
         </button> */}
         <button
-          className={`${concertOne.className} shadow-md shadow-[#757575] text-3xl rounded-2xl px-[20px] py-2 bg-white text-[#303B4A] border-[5px] border-[#364D6D]`}
+          className={`${concertOne.className} ${
+            !isLoggedIn && "hidden"
+          } shadow-md shadow-[#757575] text-3xl rounded-2xl px-[20px] py-2 bg-white text-[#303B4A] border-[5px] border-[#364D6D]`}
           onClick={() => submitData("unsold")}
         >
-          BID
+          {isBidClicked ? <ImSpinner3 className="animate-pulse" /> : "BID"}
         </button>
       </div>
 
       <div className="">
         <input
-          className={`${concertOne.className} w-[150px] shadow-md shadow-[#757575] text-3xl rounded-2xl px-[15px] text-center py-2 bg-white text-[#303B4A] border-[5px] border-[#364D6D]`}
+          className={`${concertOne.className} ${
+            !isLoggedIn && "hidden"
+          } w-[150px] shadow-md shadow-[#757575] text-3xl rounded-2xl px-[15px] text-center py-2 bg-white text-[#303B4A] border-[5px] border-[#364D6D]`}
           value={bidingAmt}
           onChange={bidingAmount}
         />
       </div>
 
       <div
-        className={`bg-white rounded-full ${
+        className={`bg-white rounded-full ${!isLoggedIn && "hidden"} ${
           isSoldClicked
             ? "scale-[.85] transition delay-500"
             : " transition delay-500"
@@ -149,9 +156,9 @@ export default function BidingActivity({
       >
         <button
           onClick={() => submitData("sold")}
-          className={`text-[#303B4A] ${concertOne.className} size-full text-3xl`}
+          className={`text-[#303B4A] ${concertOne.className} flex justify-center items-center size-full text-3xl`}
         >
-          SOLD
+          {isSoldClicked ? <ImSpinner3 className="animate-pulse" /> : "SOLD"}
         </button>
       </div>
       <div

@@ -4,30 +4,36 @@ import Image from "next/image";
 import logo from "../../../public/logo.svg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { VscAccount } from "react-icons/vsc";
 
 export default function Header() {
   const pathname = usePathname();
 
   return (
     <nav
-      className={`flex gap-4 sm:gap-8 justify-center py-4 sm:py-6 z-50 ${
+      className={`flex pl-[65px] w-full gap-4 sm:gap-8 justify-center py-4 sm:py-6 z-50 ${
         pathname === "/auction" ? "text-white min-w-[1300px]" : "text-black"
       }`}
     >
-      <Link href={"/"}>
-        <h1
-          className={`text-sm sm:text-xl hover:underline hover:underline-offset-4`}
-        >
+      <div className="text-xl">
+        <Link href={"/login"}>
+          <VscAccount />
+        </Link>
+      </div>
+      <h1 className={`text-sm sm:text-xl `}>
+        <Link href={"/"} className="hover:underline hover:underline-offset-4">
           Home
-        </h1>
-      </Link>
-      <Link href={"/auction"}>
-        <h1
-          className={`text-sm sm:text-xl hover:underline hover:underline-offset-4`}
+        </Link>
+      </h1>
+      <h1 className={`text-sm sm:text-xl `}>
+        <Link
+          href={"/auction"}
+          className="hover:underline hover:underline-offset-4"
         >
           Auction
-        </h1>
-      </Link>
+        </Link>
+      </h1>
+
       <Image
         src={logo}
         quality={100}
@@ -36,17 +42,21 @@ export default function Header() {
         alt="RRC club logo"
         className="w-[70px] h-[70px] sm:w-auto sm:h-auto"
       />
-      <Link href={"/uploadDetails"}>
-        <h1
-          className={`text-sm sm:text-xl hover:underline hover:underline-offset-4`}
+      <h1 className={`text-sm sm:text-xl `}>
+        <Link
+          href={"/uploadDetails"}
+          className="hover:underline hover:underline-offset-4"
         >
           Upload Details
-        </h1>
-      </Link>
-      <h1
-        className={`text-sm sm:text-xl hover:underline hover:underline-offset-4`}
-      >
-        Gallery
+        </Link>
+      </h1>
+      <h1 className={`text-sm sm:text-xl `}>
+        <Link
+          href={"/gallery"}
+          className="hover:underline hover:underline-offset-4"
+        >
+          Gallery
+        </Link>
       </h1>
     </nav>
   );
