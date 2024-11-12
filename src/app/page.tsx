@@ -9,6 +9,7 @@ import volleyballTournament from "../../public/volleyTournament.svg";
 import { Cutive_Mono } from "next/font/google";
 import { TiTick } from "react-icons/ti";
 import ImageSlider from "./_components/ImageSlider";
+import Link from "next/link";
 
 const cutiveMono = Cutive_Mono({
   subsets: ["latin"],
@@ -113,14 +114,16 @@ export default function Page() {
 
       <div className="bg-[#FDDBA2] py-[70px] flex flex-col items-center">
         <ImageSlider />
-        <button className="w-[200px] sm:w-[474px] bg-black text-white rounded-md my-6 text-xl p-2">
-          Gallery
-        </button>
+        <Link href={"/gallery"}>
+          <button className="w-[200px] sm:w-[474px] bg-black text-white rounded-md my-6 text-xl p-2">
+            Gallery
+          </button>
+        </Link>
       </div>
 
-      <div className="">
+      {/* <div className="">
         <Image src={line} className="w-full" alt="zig zag line" />
-      </div>
+      </div> */}
     </main>
   );
 }

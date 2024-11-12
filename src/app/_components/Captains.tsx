@@ -49,7 +49,7 @@ export default function Captains() {
 
   return (
     <div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-around">
         {captainsList.map((captain) => (
           <div
             key={captain.srNo}
@@ -112,8 +112,17 @@ export default function Captains() {
                       className="rounded-full size-[100px] shadow-md shadow-[#767676]"
                       alt={player.name}
                     />
-                    <p className="text-sm mt-2">
-                      {player?.bid === "#REF!" || "#N/A" ? "" : player.bid}
+                    <p className="text-xs">
+                      {/* {player?.name} */}
+                      {player?.name === "#REF!" || player?.name === "#N/A"
+                        ? ""
+                        : player.name}
+                    </p>
+                    <p className="text-xs">
+                      {/* {player?.bid} */}
+                      {player?.bid === "#REF!" || player?.bid === "#N/A"
+                        ? ""
+                        : player.bid}
                     </p>
                   </div>
                 </>
